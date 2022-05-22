@@ -1,13 +1,13 @@
-# Remix + Deno
+# Industrial Stack (Remix + Deno + Rust)
 
-Welcome to the Deno template for Remix! 🦕
+Welcome to the industrial stack. feel that rusty metal grinding yet?
 
-For more, check out the [Remix docs](https://remix.run/docs).
+For more, check out the [Repository](https://github.com/thehatworks/industrial-stack)
 
 ## Install
 
 ```sh
-npx create-remix@latest --template deno
+npx create-remix@latest --template https://github.com/thehatworks/industrial-stack
 ```
 
 ## Managing dependencies
@@ -45,21 +45,7 @@ To get types in another editor, use an extension for Deno that supports import m
 
 For more, see [our decision doc for interop between Deno and NPM](https://github.com/remix-run/remix/blob/main/decisions/0001-use-npm-to-manage-npm-dependencies-for-deno-projects.md#vs-code-type-hints).
 
-## Production
-
-First, build your app for production:
-
-```sh
-npm run build
-```
-
-Then run the app in production mode:
-
-```sh
-npm start
-```
-
-## Deployment
+## Deployment to Denoland Deploy
 
 Building the Deno app (`npm run build`) results in two outputs:
 
@@ -68,47 +54,26 @@ Building the Deno app (`npm run build`) results in two outputs:
 
 You can deploy these bundles to any host that runs Deno, but here we'll focus on deploying to [Deno Deploy](https://deno.com/deploy).
 
-## Setting up Deno Deploy
+## Set up Deno Deploy
 
-1. [Sign up](https://dash.deno.com/signin) for Deno Deploy.
+1. [Make a Github Repo](https://github.com/)
 
-2. [Create a new Deno Deploy project](https://dash.deno.com/new) for this app.
-
-3. Replace `<your deno deploy project>` in the `deploy` script in `package.json` with your Deno Deploy project name:
-
-```json
-{
-  "scripts": {
-    "deploy": "deployctl deploy --project=<your deno deploy project> --include=.cache,build,public ./build/index.js"
-  }
-}
+2. Iniitalize the repository.
+```shell
+git init
+git add .
+git commit -m "first commit"
+git remote add origin <your repository origin url>
 ```
 
-4. [Create a personal access token](https://dash.deno.com/account) for the Deno Deploy API and export it as `DENO_DEPLOY_TOKEN`:
+3. [Sign up](https://dash.deno.com/signin) for Deno Deploy.
 
-```sh
-export DENO_DEPLOY_TOKEN=<your Deno Deploy API token>
+4. [Create a new Deno Deploy project](https://dash.deno.com/new) for this app. On the creation page, make sure to link it to the github repository you created and add-origin'ed before and select "GitHub Actions" mode from the dropdown, NOT "Automatic"
+### Deploying
+
+```shell
+git push origin main
 ```
 
-You may want to add this to your `rc` file (e.g. `.bashrc` or `.zshrc`) to make it available for new terminal sessions, but make sure you don't commit this token into `git`.
-If you want to use this token in GitHub Actions, set it as a GitHub secret.
+pushing to any branch will make you a deployment! Yay!
 
-5. Install the Deno Deploy CLI, [`deployctl`](https://github.com/denoland/deployctl):
-
-```sh
-deno install --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -r -f https://deno.land/x/deploy/deployctl.ts
-```
-
-6. If you have previously installed the Deno Deploy CLI, you should update it to the latest version:
-
-```sh
-deployctl upgrade
-```
-
-### Deploying to Deno Deploy
-
-After you've set up Deno Deploy, run:
-
-```sh
-npm run deploy
-```

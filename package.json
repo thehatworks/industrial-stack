@@ -1,5 +1,7 @@
 {
-  "name": "remix-template-deno",
+  "name": "industrial-stack",
+  "version": "0.1.0",
+  "author": "Mike <mike@thehatworks.com>",
   "private": true,
   "sideEffects": false,
   "scripts": {
