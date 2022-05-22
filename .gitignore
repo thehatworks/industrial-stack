@@ -1,6 +1,9 @@
 node_modules
+Cargo.lock
 
 /.cache
 /build
 /public/build
 .env
+
+/rustlib/target
