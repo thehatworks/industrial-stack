@@ -20,9 +20,16 @@ RUN rustup --version
 RUN cargo --version
 RUN rustc --version
 
+# TODO hermetically freeze wasm-pack version
+RUN curl --proto '=https' --tlsv1.2 https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+RUN wasm-pack --version
+
 # TODO heremtically freeze rustwasmc version
-RUN curl https://raw.githubusercontent.com/second-state/rustwasmc/master/installer/init.sh -sSf | sh
-RUN rustwasmc --version
+# RUN curl https://raw.githubusercontent.com/second-state/rustwasmc/master/installer/init.sh -sSf | sh
+# RUN rustwasmc --version
+
+
+
 
 # TODO Split Rust & Node build steps
 

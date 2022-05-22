@@ -7,15 +7,22 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn entrypoint(name: &str) {
-    log(&format!("Hello, ()!", name));
+pub fn string_manip(name: &str) -> String {
+    format!("Hello, {}!", name)
+}
+
+#[wasm_bindgen]
+pub fn entrypoint(name: &str) -> String {
+    let out = string_manip(name);
+    log(out.as_str());
+    out
 }
 
 #[cfg(test)]
 mod tests {
     #[test]
     fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+        let out = super::string_manip("YO");
+        assert_eq!(out, "Hello, YO!");
     }
 }

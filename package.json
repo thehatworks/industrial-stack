@@ -6,7 +6,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "run-s build:rust build:remix",
-    "build:rust": "cd rustlib && rustwasmc build --target deno --enable-aot",
+    "build:rust": "cd rustlib && cargo build --target wasm32-unknown-unknown",
     "build:remix": "remix build",
     "docker": "docker build . -t industrial-stack:latest",
     "deploy": "deployctl deploy --prod --include=build,public --project=<your deno deploy project> ./build/index.js",
@@ -16,7 +16,10 @@
     "dev:remix": "remix watch",
     "format": "deno fmt --config deno.config.json .",
     "lint": "deno lint --config deno.config.json .",
-    "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js"
+    "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js",
+    "test:rust": "cd rustlib && cargo test",
+    "test:deno": "echo TODO IMPLEMENT test:deno",
+    "test": "run-s build:rust test:rust test:deno"
   },
   "dependencies": {
     "@remix-run/deno": "^1.5.1",
