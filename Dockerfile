@@ -21,6 +21,7 @@ RUN cargo --version
 RUN rustc --version
 
 # TODO hermetically freeze wasm-pack version
+RUN rustup target add wasm32-unknown-unknown
 RUN curl --proto '=https' --tlsv1.2 https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 RUN wasm-pack --version
 

@@ -12,7 +12,7 @@
     "deploy": "deployctl deploy --prod --include=build,public --project=<your deno deploy project> ./build/index.js",
     "dev": "remix build && run-p dev:rust && run-p dev:remix dev:deno",
     "dev:deno": "cross-env NODE_ENV=development deno run --unstable --watch --allow-net --allow-read --allow-env ./build/index.js",
-    "dev:rust": "cd rustlib && rustwasmc build --target deno",
+    "dev:rust": "cd rustlib && cargo build --target wasm32-unknown-unknown",
     "dev:remix": "remix watch",
     "format": "deno fmt --config deno.config.json .",
     "lint": "deno lint --config deno.config.json .",
