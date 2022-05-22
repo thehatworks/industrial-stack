@@ -39,10 +39,15 @@ jobs:
 
       - name: Remix Build
         run: npm run build
+      # TODO: vendor..?
+
+      # TODO fork action so only upload public & build dirs
+      #      then skip this step
+      - name: 🗑️ Throw out deps
+        run: rm -rf ./node_modules
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
           project: "industrial-stack"
-          # TODO only upload public & build dirs
           entrypoint: "./build/index.js" 
