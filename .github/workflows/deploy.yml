@@ -1,0 +1,42 @@
+name: 🤸🏽 Integrate & Deploy
+on: [push]
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  lint:
+    name: 🤸🏽 lint, build & deploy
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write # Needed for auth with Deno Deploy
+      contents: read # Needed to clone the repository
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
+      - name: ⬇️ Clone repository
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+        with:
+          useLockFile: false  
+      
+      - name: 🔬 Lint
+        run: npm run lint
+
+      - name: Remix Build
+        run: npm run build
+
+      - name: Upload to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: "industrial-stack"
+          # TODO only upload public & build dirs
+          entrypoint: "./build/index.js" 
