@@ -3,17 +3,11 @@ import { createRequestHandlerWithStaticFiles } from "@remix-run/deno";
 // Import path interpreted by the Remix compiler
 import * as build from "@remix-run/dev/server-build";
 
-const load_wasm = async () => {
-  console.log(Deno.cwd());
-  const wasmCode = await Deno.readFile("rustlib/target/wasm32-unknown-unknown/debug/rustlib.wasm");
-  const wasmModule = new WebAssembly.Module(wasmCode);
-  const wasmInstance = new WebAssembly.Instance(wasmModule);
-  const entrypoint = wasmInstance.exports.entrypoint as CallableFunction;
-  console.log(`deno: ${entrypoint("my man")}`);
-};
-  
+import init from "./rustlib/pkg/rustlib.js";
+
 const go = async () => {
-  await load_wasm();
+  await init(Deno.readFile('./rustlib/pkg/rustlib_bg.wasm'));
+  
   const remixHandler = createRequestHandlerWithStaticFiles({
     build,
     mode: Deno.env.get("NODE_ENV"),
