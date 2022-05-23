@@ -17,6 +17,7 @@
     "format": "deno fmt --config deno.config.json .",
     "lint": "deno lint --config deno.config.json .",
     "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js",
+    "start:docker": "docker run -it industrial-stack:latest",
     "test:rust": "cd rustlib && cargo test",
     "test:deno": "echo TODO IMPLEMENT test:deno",
     "test": "run-s build:rust test:rust test:deno"
