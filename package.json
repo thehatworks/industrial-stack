@@ -9,7 +9,7 @@
     "build:rust": "cd rustlib && wasm-pack build --target web",
     "build:remix": "remix build",
     "docker": "docker build . -t industrial-stack:latest",
-    "deploy": "deployctl deploy --prod --include=build,public --project=<your deno deploy project> ./build/index.js",
+    "deploy": "deployctl deploy --prod --include=build,public,rustlib --project=industrial-stack ./build/index.js",
     "dev": "remix build && run-p dev:rust && run-p dev:remix dev:deno",
     "dev:deno": "cross-env NODE_ENV=development deno run --unstable --watch --allow-net --allow-read --allow-env ./build/index.js",
     "dev:rust": "cd rustlib && wasm-pack build --target web",

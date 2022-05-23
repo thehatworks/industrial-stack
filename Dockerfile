@@ -44,24 +44,37 @@ RUN npm ci
 ENV NODE_ENV=${NODE_ENVIRONMENT}
 RUN npm run build
 
-FROM denoland/deno:1.21.3 as run
+FROM denoland/deno:1.21.3 as deploy
 
-EXPOSE 8000
-
-# Best security practices
 USER deno
 
-ENV NODE_ENV=${NODE_ENVIRONMENT}
+RUN deno install --allow-read --allow-write --allow-env --allow-net --allow-run --no-check -r -f https://deno.land/x/deploy/deployctl.ts
 
 WORKDIR /myapp
 
 COPY --from=build /myapp/build build
 COPY --from=build /myapp/public public
 
-RUN deno --version
-# deno 1.21.3 (release, x86_64-unknown-linux-gnu)
-# v8 10.0.139.17
-# typescript 4.6.2
+RUN deployctl deploy --prod --include=build,public,rustlib --project=industrial-stack ./build/index.js
 
-ENTRYPOINT [ "deno" ]
-CMD ["run", "--unstable", "--allow-net", "--allow-read", "--allow-env", "./build/index.js"]
+# FROM denoland/deno:1.21.3 as run
+
+# EXPOSE 8000
+
+# # Best security practices
+# USER deno
+
+# ENV NODE_ENV=${NODE_ENVIRONMENT}
+
+# WORKDIR /myapp
+
+# COPY --from=build /myapp/build build
+# COPY --from=build /myapp/public public
+
+# RUN deno --version
+# # deno 1.21.3 (release, x86_64-unknown-linux-gnu)
+# # v8 10.0.139.17
+# # typescript 4.6.2
+
+# ENTRYPOINT [ "deno" ]
+# CMD ["run", "--unstable", "--allow-net", "--allow-read", "--allow-env", "./build/index.js"]
