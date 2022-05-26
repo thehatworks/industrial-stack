@@ -11,6 +11,7 @@ npx create-remix@latest --template https://github.com/thehatworks/industrial-sta
 ```
 
 edit deploy scripts to contain your deno deploy project
+
 ## Managing dependencies
 
 Read about [how we recommend to manage dependencies for Remix projects using Deno](https://github.com/remix-run/remix/blob/main/decisions/0001-use-npm-to-manage-npm-dependencies-for-deno-projects.md).

@@ -9,7 +9,6 @@
     "build:rust": "cd rustlib && wasm-pack build --target web",
     "build:remix": "remix build",
     "docker": "docker build . -t industrial-stack:latest",
-    "deploy": "deployctl deploy --prod --include=build,public,rustlib --project=industrial-stack ./build/index.js",
     "dev": "remix build && run-p dev:rust && run-p dev:remix dev:deno",
     "dev:deno": "cross-env NODE_ENV=development deno run --unstable --watch --allow-net --allow-read --allow-env ./build/index.js",
     "dev:rust": "cd rustlib && wasm-pack build --target web",
@@ -17,7 +16,7 @@
     "format": "deno fmt --config deno.config.json .",
     "lint": "deno lint --config deno.config.json .",
     "start": "cross-env NODE_ENV=production deno run --unstable --allow-net --allow-read --allow-env ./build/index.js",
-    "start:docker": "docker run -it industrial-stack:latest",
+    "start:docker": "docker run -p 8000:8000 -it industrial-stack:latest",
     "test:rust": "cd rustlib && cargo test",
     "test:deno": "echo TODO IMPLEMENT test:deno",
     "test": "run-s build:rust test:rust test:deno"

@@ -1,25 +1,6 @@
 FROM debian:bullseye-slim as base
 
-# Rust from scratch
 
-RUN apt-get update
-RUN apt-get install -y \
-ca-certificates \
-curl \
-libcurl3-gnutls \
-build-essential
-
-ENV RUSTUP_HOME=/.cargo
-ENV CARGO_HOME=/.cargo
-
-# TODO hermetically freeze rust toolchain version
-RUN curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
-ENV PATH=${CARGO_HOME}/bin:${PATH}
-
-# Verify Rust
-RUN rustup --version
-RUN cargo --version
-RUN rustc --version
 
 # Verify Node
 RUN npm install -g npm@8.10.0

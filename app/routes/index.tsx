@@ -1,34 +1,37 @@
 import type { LoaderFunction } from "@remix-run/deno";
 import { json } from "@remix-run/deno";
 import { useLoaderData } from "@remix-run/react";
+import React from "react";
 
-import * as React from "react";
-
-import { typed_and_serialized_from_deno } from "../../rustlib/pkg/rustlib.js";
-type ExampleRecord = {
-  truthy: boolean;
-  mathsy: number;
-  spelly: string;
-  county: ExampleRecord[];
-  mappy: {
-    [x: string]: ExampleRecord
-  };
+import { possibly_recur_todo } from "../../rustlib/pkg/rustlib.js";
+type Todo = {
+    done: boolean,
+    priority: number,
+    due_date: string,
+    title: string,
+    steps: string[],
+    followers: { 
+      [x: string]: {
+        email: string
+      }
+    }
 };
 
-
-const leaf: ExampleRecord = {
-  truthy: false,
-  mathsy: 10,
-  spelly: "hello rust, it's me deno 🧦",
-  county: [],
-  mappy: {}
-};
-
-const some_data: ExampleRecord = {
-  ...leaf,
-  county: [ leaf, leaf, leaf ],
-  mappy: { leaf, leaf2: leaf, leaf3: leaf }
-};
+const todos = [{
+  done: false,
+  priority: 42,
+  due_date: `${new Date()}`,
+  title: "A Task",
+  steps: ["hmm"],
+  followers: {
+    me: {
+      email: "me@example.com"
+    },
+    coworker: {
+      email: "coworker@example.com"
+    }   
+  }
+}]
 
 export const loader: LoaderFunction = () => {
   return json<ExampleRecord>(
@@ -37,11 +40,11 @@ export const loader: LoaderFunction = () => {
 };
 
 export default function Index() {
-  const loader_data = useLoaderData<Value>();
+  const loader_data = useLoaderData<ExampleRecord>();
   return (
     <main>
       <h2>
-        hawt new remix stack comin' at ya 💿 🧦 🦀
+        Remix 💿 & Deno 🧦 in a tree 🌳, along comes ferris... 🦀
       </h2>
       <section>
         <pre>

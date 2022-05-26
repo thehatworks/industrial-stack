@@ -1,35 +1,63 @@
 use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, Number, Map};
+use serde_json::{Number, Map, Value};
+use chrono::{DateTime, Utc};
+use std::fmt;
+
+#[macro_use]
+extern crate serde_json;
 
 // You will want to look here
 // https://github.com/rustwasm/wasm-bindgen
 
-
 // This is Serde & Serde-JSON
 #[derive(Debug, Serialize, Deserialize)]
-struct ExampleRecord {
-    truthy: bool,
-    mathsy: Number,
-    spelly: String,
-    county: Vec<Value>,
-    mappy: Map<String, Value>,
+struct Todo {
+    done: bool,
+    priority: Number,
+    due_date: String,
+    title: String,
+    steps: Vec<String>,
+    followers: Map<String, Value>,
+}
+
+fn x_for_bool(checked: &bool) -> &str {
+    match checked {
+        true => "x",
+        false => " "
+    }
+}
+
+impl fmt::Display for Todo {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[{}]", x_for_bool(&self.done))
+    }
+}
+
+fn inc_serialized_datetime_by_one_month(isodate: &str) -> Result<String, JsError> {
+    let datetime = DateTime::parse_from_rfc3339(isodate)?;
+    let datetime_utc = datetime.with_timezone(&Utc);
+    Ok(format!("{}", datetime_utc))
 }
 
 #[wasm_bindgen]
-pub fn typed_and_serialized_from_deno(data: &str) -> Result<String, JsError> {
-    // Some JSON input data as a &str. Maybe this comes from the user.
-
+pub fn possibly_recur_todo(serialized_todo: &str) -> Result<String, JsError> {
     // trailing ? is rust's "try catch"
-    let some_data: ExampleRecord = serde_json::from_str(data)?;
+    let todo: Todo = serde_json::from_str(serialized_todo)?;
 
-    // Do things just like with any other Rust data structure.
-    log(format!("this is possible because we derived Debug above: {:?}", some_data).as_str());
-    log(format!("Specific values: {:?} {}", some_data.truthy, some_data.spelly).as_str());
+    // show how we can do some print-style debugging in rust
+    // and pass it all the way out to deno runtime's console.log
+    log(format!("this is possible because we derived Debug above: {:?}", todo).as_str());
+    log(format!("this is possible because we impl'd fmt::Display for Todo: {}", todo).as_str());
 
 
-    let modified_data = match some_data {
-        _ => ExampleRecord { truthy: !some_data.truthy, spelly: String::from("base case of match from Rust 🦀"), ..some_data }
+    let modified_data = match todo {
+        Todo { done: true, .. } => Todo {
+            done: false,
+            due_date: inc_serialized_datetime_by_one_month(todo.due_date.as_str())?,
+            ..todo
+        },
+        _ => todo
     };
 
     Ok(serde_json::to_string(&modified_data)?)
@@ -46,32 +74,48 @@ extern "C" {
 // here's how to unit test your rust functions
 #[cfg(test)]
 mod tests {
+    use super::possibly_recur_todo;
+
     #[test]
     fn it_works() {
         let fixture = r#"
         {
-            "truthy": false,
-            "mathsy": 42,
-            "spelly": "hi there",
-            "county": [],
-            "mappy": {}
+            "done": true,
+            "priority": 42,
+            "title": "Important Task",
+            "due_date": "2022-05-23T18:29:58.011Z"
+            "steps": ["Read", "Calculate", "Write"],
+            "followers": {
+                "me": {
+                    "email": "me@example.com"
+                },
+                "coworker: {
+                    "email": "coworker@example.com"
+                }
+            }
         }"#;
-        /*        
-        let fixture_json = json!({
-           truthy: false,
-           mathsy: 42,
-           spelly: "hi there",
-           county: [],
-           mappy: {}
-       });
-        */
         
+        let check_result = json!({
+           "done": false,
+           "priority": 42i32,
+           "title": "Important Task",
+           "due_date": "2022-05-23T18:29:58.011Z",
+           "steps": ["Read", "Calculate", "Write"],
+           "followers": {
+               "me": {
+                   "email": "me@example.com"
+                }
+            }
+        });
+        
+        /*
+        let result = match possibly_recur_todo(fixture) {
+            OK(serialized) => serde_json::from_str(serialized),
+            Error(_) => panic!("darn!")
+        };
 
-        /* 
-        assert_eq!(
-            super::typed_and_serialized_from_deno(&fixture).unwrap(),
-            String::from("hi there")
-        );
+        assert_eq!(result, check_result);
         */
+
     }
 }
