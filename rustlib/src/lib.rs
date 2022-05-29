@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json::{Number, Map, Value};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, Duration, SecondsFormat};
 use std::fmt;
 
 #[macro_use]
@@ -21,23 +21,18 @@ struct Todo {
     followers: Map<String, Value>,
 }
 
-fn x_for_bool(checked: &bool) -> &str {
-    match checked {
-        true => "x",
-        false => " "
-    }
-}
-
 impl fmt::Display for Todo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[{}]", x_for_bool(&self.done))
+        write!(f, "[{}]", if self.done { "x" } else { " " })?;
+        write!(f, " {}", &self.title)
     }
 }
 
-fn inc_serialized_datetime_by_one_month(isodate: &str) -> Result<String, JsError> {
+fn inc_iso_datetime(isodate: &str, dur: Duration) -> Result<String, JsError> {
     let datetime = DateTime::parse_from_rfc3339(isodate)?;
     let datetime_utc = datetime.with_timezone(&Utc);
-    Ok(format!("{}", datetime_utc))
+    
+    Ok((datetime_utc + dur).to_rfc3339_opts(SecondsFormat::Millis, true))
 }
 
 #[wasm_bindgen]
@@ -50,11 +45,10 @@ pub fn possibly_recur_todo(serialized_todo: &str) -> Result<String, JsError> {
     log(format!("this is possible because we derived Debug above: {:?}", todo).as_str());
     log(format!("this is possible because we impl'd fmt::Display for Todo: {}", todo).as_str());
 
-
     let modified_data = match todo {
         Todo { done: true, .. } => Todo {
             done: false,
-            due_date: inc_serialized_datetime_by_one_month(todo.due_date.as_str())?,
+            due_date: inc_iso_datetime(todo.due_date.as_str(), Duration::days(7))?,
             ..todo
         },
         _ => todo

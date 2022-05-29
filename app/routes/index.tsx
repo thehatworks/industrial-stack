@@ -18,9 +18,9 @@ type Todo = {
 };
 
 const todos = [{
-  done: false,
+  done: true,
   priority: 42,
-  due_date: `${new Date()}`,
+  due_date: new Date().toISOString(),
   title: "A Task",
   steps: ["hmm"],
   followers: {
@@ -34,13 +34,13 @@ const todos = [{
 }]
 
 export const loader: LoaderFunction = () => {
-  return json<ExampleRecord>(
-    JSON.parse(typed_and_serialized_from_deno(JSON.stringify(some_data)))
+  return json<Todo>(
+    JSON.parse(possibly_recur_todo(JSON.stringify(todos[0])))
   );
 };
 
 export default function Index() {
-  const loader_data = useLoaderData<ExampleRecord>();
+  const loader_data = useLoaderData() as Todo;
   return (
     <main>
       <h2>
